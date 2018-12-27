@@ -11,6 +11,9 @@
 
 #include "ship.h"
 #include "enemy.h"
+#include "bullet_png.h"
+#include "enemies_png.h"
+
 using std::vector;
 using namespace wsp;
 
@@ -21,16 +24,10 @@ Game::Game() : next_wave(0), wave_num(1), show_hitbox(false)
 	player = new Ship(this);
 	bullet_img = new Image();
 	
-	if(bullet_img->LoadImage("data/bullet.png")!=IMG_LOAD_ERROR_NONE)
-	{
-		exit(0);
-	}
+	bullet_img->LoadImage(bullet_png);
 
 	enemy_img = new Image();
-	if(enemy_img->LoadImage("data/enemies.png")!=IMG_LOAD_ERROR_NONE)
-	{
-		exit(0);
-	}
+	bullet_img->LoadImage(enemies_png);
 }
 
 Game::~Game()
@@ -40,9 +37,11 @@ Game::~Game()
 
 bool Game::update()
 {
-	if(WPAD_ButtonsDown(0)&WPAD_BUTTON_1)
+	u32 btn = WPAD_ButtonsDown(0);
+	
+	if(btn & WPAD_BUTTON_1)
 		show_hitbox = true;
-	if(WPAD_ButtonsDown(0)&WPAD_BUTTON_B)
+	if(btn & WPAD_BUTTON_B)
 		show_hitbox = false;
 	for(vector<Entity *>::iterator iter = ent_list_tmp.begin();iter!=ent_list_tmp.end();iter++)
 	{

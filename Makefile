@@ -118,6 +118,12 @@ install:
 	cp -fr include/* $(LIBOGC_INC)
 
 #---------------------------------------------------------------------------------
+uninstall:
+	rm $(LIBOGC_LIB)/$(TARGET).a
+	rm -fr $(LIBOGC_INC)/wiisprite* 
+
+
+#---------------------------------------------------------------------------------
 tgz:
 	tar -C $(CURDIR) -czf $(TARGET)-$(MAJOR).$(MINOR).$(REVISION).tgz lib include
 

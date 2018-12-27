@@ -11,6 +11,8 @@
 #include <wiiuse/wpad.h>
 
 #include <wiisprite.h>
+#include "menu_png.h"
+#include "cursor_png.h"
 
 using namespace wsp;
 
@@ -18,9 +20,9 @@ Menu::Menu() : menu_sel(0), menu_bg(new Sprite()), cursor(new Sprite), last_time
 {
 	set_alive(true);
 	Image *bg = new Image();
-	bg->LoadImage("data/menu.png");
+	bg->LoadImage(menu_png);
 	Image *cursor_img = new Image();
-	cursor_img->LoadImage("data/cursor.png");
+	cursor_img->LoadImage(cursor_png);
 
 	menu_bg->SetImage(bg);
 	cursor->SetImage(cursor_img,32,32);
@@ -41,17 +43,19 @@ Menu::~Menu()
 
 bool Menu::update()
 {
-	if((WPAD_ButtonsDown(0)&WPAD_BUTTON_LEFT) && menu_sel == 0)
+	u32 btn = WPAD_ButtonsDown(0);
+	
+	if((btn & WPAD_BUTTON_LEFT) && (menu_sel == 0))
 	{
 		menu_sel = 1;
 		cursor->Move(0.0f,65.0f);
 	}
-	if((WPAD_ButtonsDown(0)&WPAD_BUTTON_RIGHT) && menu_sel == 1)
+	if((btn & WPAD_BUTTON_RIGHT) && (menu_sel == 1))
 	{
 		menu_sel = 0;
 		cursor->Move(0.0f,-65.0f);
 	}
-	if(WPAD_ButtonsDown(0)&WPAD_BUTTON_2)
+	if(btn & WPAD_BUTTON_2)
 	{
 		if(menu_sel == 0)
 		{

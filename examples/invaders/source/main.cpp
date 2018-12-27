@@ -15,12 +15,17 @@
 using namespace wsp;
 
 bool quit = false;
+u32 _button_pressed;
+u32 _button_held;
 
 void ScanPADSandReset(void)
 {
-   PAD_ScanPads();
-   WPAD_ScanPads();
-	if(PAD_ButtonsDown(0)&PAD_TRIGGER_Z || WPAD_ButtonsDown(0)&WPAD_BUTTON_HOME)
+	
+	WPAD_ScanPads();
+	_button_pressed = WPAD_ButtonsDown(0);
+	_button_held = WPAD_ButtonsHeld(0);
+	
+	if(_button_pressed & WPAD_BUTTON_HOME)
 	{
 		quit = true;
 	}
@@ -34,15 +39,15 @@ void ScanPADSandReset(void)
 int main(int argc, char **argv)
 {
 	GameWindow gw;
-	PAD_Init();
-	WPAD_Init();
+
 	gw.InitVideo();
+	WPAD_Init();
 	Quad fade;
 	fade.SetWidth(640); // Used at the end of the prog
 	fade.SetHeight(480);
 	GXColor fade_col = { 0,0,0,0 };
 	fatInitDefault();
-
+	
 	Engine engine;
 
 	for(;;)

@@ -17,7 +17,8 @@
 #include <wiisprite.h> // The main libwiisprite header.
 using namespace wsp; // To not make us type this again and again
 
-#include "libwiisprite.h" // This is the header file we got from the devkitPPC tool "raw2c"
+#include "icon_png.h" // This is the header file we got from the devkitPPC tool "raw2c"
+#include "noci_png.h" // This is the header file we got from the devkitPPC tool "raw2c"
 
 GameWindow gwd; // Initializes and renders our scene.
 Sprite sprite; // The drawable object we can modify.
@@ -42,11 +43,13 @@ int main(int argc, char **argv) {
 	LayerManager manager(3); // DO NOT FORGET TO INCREASE THIS NUMBER FOR YOUR OWN TESTS.
 
 	// Now we're loading an image.
-	// If the image is not found at our location, we exit to the loader
-	if(image.LoadImage("sd:/libwiisprite.png") != IMG_LOAD_ERROR_NONE)exit(0);
+	// If the image is not found at our location, we load a fake
+	if(image.LoadImage("sd:/libwiisprite.png") != IMG_LOAD_ERROR_NONE)
+		image.LoadImage(noci_png);
+	
 	// The second image is loaded from the buffer.
 	// We can simply use the same command.
-	if(image2.LoadImage(libwiisprite) != IMG_LOAD_ERROR_NONE)exit(0);
+	if(image2.LoadImage(icon_png) != IMG_LOAD_ERROR_NONE)exit(0);
 
 	// We assign the loaded images to the sprites
 	sprite.SetImage(&image);

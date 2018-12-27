@@ -7,14 +7,18 @@
 #include <wiiuse/wpad.h>
 
 #include "menu.h"
+#include "title_png.h"
+extern "C" {
+extern int logDebug(const char *fmt, ...);
+}
+extern u32 _button_pressed;
 
 using namespace wsp;
 Title::Title() : child(NULL)
 {
 	set_alive(true);
 	Image *title = new Image();
-	if(title->LoadImage("data/title.png")!=IMG_LOAD_ERROR_NONE)
-		exit(0);
+	title->LoadImage(title_png);
 	Sprite *title_spr = new Sprite();
 	title_spr->SetImage(title);
 	title_spr->SetPosition(320-title->GetWidth()/2,128);
@@ -31,10 +35,11 @@ bool Title::update()
 {
 	if(get_sprite()->GetZoom()<1.0f)
 		get_sprite()->SetZoom(get_sprite()->GetZoom()+0.05f);
-
+		
 	if(!child)
 	{
-		if(WPAD_ButtonsDown(0))
+		logDebug("pressed %x\n",_button_pressed);
+		if(_button_pressed & WPAD_BUTTON_A)
 			child = new Menu();
 	}
 	else

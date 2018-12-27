@@ -6,6 +6,11 @@
 #include <wiisprite.h>
 #include <math.h>
 #include "enemy.h"
+#include "ship_png.h"
+
+extern u32 _button_pressed;
+extern u32 _button_held;
+
 using namespace wsp;
 
 Ship::Ship()
@@ -17,10 +22,7 @@ Ship::Ship(Game *papa) : next_update(ticks_to_millisecs(gettime())), sinew(3.0),
 {
 	parent = papa;
 	Image *ship_img = new Image();
-	if(ship_img->LoadImage("data/ship.png")!=IMG_LOAD_ERROR_NONE)
-	{
-		exit(0);
-	}
+	ship_img->LoadImage(ship_png);
 
 	Sprite *ship_spr = new Sprite();
 	ship_spr->SetImage(ship_img,48,48);
@@ -41,8 +43,8 @@ bool Ship::update()
 		return false;
 
 	u64 cticks = ticks_to_millisecs(gettime());
-
-	if(WPAD_ButtonsHeld(0)&WPAD_BUTTON_UP)
+	
+	if(_button_held & WPAD_BUTTON_UP)
 	{
 		if(ship->GetX()>-(s32)ship->GetWidth()/2)
 		{
@@ -53,7 +55,7 @@ bool Ship::update()
 			ship->SetPosition(-(s32)ship->GetWidth()/2,ship->GetY());
 		}
 	}
-	if(WPAD_ButtonsHeld(0)&WPAD_BUTTON_DOWN)
+	if(_button_held & WPAD_BUTTON_DOWN)
 	{
 		if(ship->GetX()<640-ship->GetWidth()/2)
 		{
@@ -65,12 +67,12 @@ bool Ship::update()
 		}
 	}
 
-	if(WPAD_ButtonsDown(0)&WPAD_BUTTON_2)
+	if(_button_pressed & WPAD_BUTTON_2)
 	{
 		parent->add_entity(new Bullet(parent, ship->GetX()+ship->GetWidth()/2-4,ship->GetY()-8));
 	}
 
-	if(WPAD_ButtonsDown(0)&WPAD_BUTTON_1)
+	if(_button_pressed & WPAD_BUTTON_1)
 	{
 		parent->add_entity(new Enemy(parent));
 	}

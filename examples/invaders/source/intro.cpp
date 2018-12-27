@@ -7,6 +7,7 @@
 #include <ogc/lwp_watchdog.h>
 
 #include "engine.h"
+#include "intro_png.h"
 
 using namespace wsp;
 
@@ -14,10 +15,8 @@ Intro::Intro() : start_time(ticks_to_millisecs(gettime())), fade_alpha(255)
 {
 	set_alive(true);
 	Image *banner = new Image();
-	if(banner->LoadImage("data/intro.png")!=IMG_LOAD_ERROR_NONE)
-	{
-		exit(0);
-	}
+	
+	banner->LoadImage(intro_png);
 
 	// Quads start at 0,0 with colour of 0,0,0 and alpha of 255 (perfect :D)
 	fade.SetWidth(640);
