@@ -38,8 +38,8 @@ bool Title::update()
 		
 	if(!child)
 	{
-		logDebug("pressed %x\n",_button_pressed);
-		if(_button_pressed & WPAD_BUTTON_A)
+		u32 btn = WPAD_ButtonsDown(WPAD_CHAN_0);
+		if(btn & WPAD_BUTTON_A)
 			child = new Menu();
 	}
 	else

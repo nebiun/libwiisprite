@@ -27,7 +27,7 @@ Game::Game() : next_wave(0), wave_num(1), show_hitbox(false)
 	bullet_img->LoadImage(bullet_png);
 
 	enemy_img = new Image();
-	bullet_img->LoadImage(enemies_png);
+	enemy_img->LoadImage(enemies_png);
 }
 
 Game::~Game()
@@ -37,7 +37,7 @@ Game::~Game()
 
 bool Game::update()
 {
-	u32 btn = WPAD_ButtonsDown(0);
+	u32 btn = WPAD_ButtonsDown(WPAD_CHAN_0);
 	
 	if(btn & WPAD_BUTTON_1)
 		show_hitbox = true;

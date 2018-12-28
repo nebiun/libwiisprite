@@ -8,9 +8,6 @@
 #include "enemy.h"
 #include "ship_png.h"
 
-extern u32 _button_pressed;
-extern u32 _button_held;
-
 using namespace wsp;
 
 Ship::Ship()
@@ -43,8 +40,8 @@ bool Ship::update()
 		return false;
 
 	u64 cticks = ticks_to_millisecs(gettime());
-	
-	if(_button_held & WPAD_BUTTON_UP)
+	u32 btn = WPAD_ButtonsHeld(WPAD_CHAN_0);
+	if(btn & WPAD_BUTTON_UP)
 	{
 		if(ship->GetX()>-(s32)ship->GetWidth()/2)
 		{
@@ -55,7 +52,7 @@ bool Ship::update()
 			ship->SetPosition(-(s32)ship->GetWidth()/2,ship->GetY());
 		}
 	}
-	if(_button_held & WPAD_BUTTON_DOWN)
+	if(btn & WPAD_BUTTON_DOWN)
 	{
 		if(ship->GetX()<640-ship->GetWidth()/2)
 		{
@@ -66,13 +63,13 @@ bool Ship::update()
 			ship->SetPosition(640-ship->GetWidth()/2,ship->GetY());
 		}
 	}
-
-	if(_button_pressed & WPAD_BUTTON_2)
+	btn = WPAD_ButtonsDown(WPAD_CHAN_0);
+	if(btn & WPAD_BUTTON_2)
 	{
 		parent->add_entity(new Bullet(parent, ship->GetX()+ship->GetWidth()/2-4,ship->GetY()-8));
 	}
 
-	if(_button_pressed & WPAD_BUTTON_1)
+	if(btn & WPAD_BUTTON_1)
 	{
 		parent->add_entity(new Enemy(parent));
 	}

@@ -43,7 +43,7 @@ Menu::~Menu()
 
 bool Menu::update()
 {
-	u32 btn = WPAD_ButtonsDown(0);
+	u32 btn = WPAD_ButtonsDown(WPAD_CHAN_0);
 	
 	if((btn & WPAD_BUTTON_LEFT) && (menu_sel == 0))
 	{
