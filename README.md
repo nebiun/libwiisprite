@@ -13,6 +13,9 @@ Based on sources from "http://wiibrew.org/wiki/Libwiisprite" version 0.3.0d
 ## Install:
 * make install
 
+## Uninstall:
+* make uninstall
+
 ## Build distribution file:
 * make tgz
 
