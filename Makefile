@@ -19,14 +19,14 @@ TARGET		:=	libwiisprite
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data  
-INCLUDES	:=
+INCLUDES	:= 
 
 #---------------------------------------------------------------------------------
 # version for release generation
 #---------------------------------------------------------------------------------
 MAJOR	 = 0
 MINOR	 = 3
-REVISION = 0e
+REVISION = 0f
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -46,7 +46,7 @@ LIBS	:=	-lpng -lz -logc -lm
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=
+LIBDIRS	:= $(PORTLIBS)
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -80,9 +80,11 @@ else
 	export LD	:=	$(CXX)
 endif
 
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
-					$(sFILES:.s=.o) $(SFILES:.S=.o)
+export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
+export OFILES_SOURCES := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(sFILES:.s=.o) $(SFILES:.S=.o)
+export OFILES := $(OFILES_BIN) $(OFILES_SOURCES)
+
+export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES)))
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
@@ -90,14 +92,14 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 export INCLUDE	:=	$(foreach dir,$(INCLUDES), -iquote $(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					-I$(CURDIR)/include \
-					-I$(PORTLIBS)/include \
+					-I$(CURDIR)/$(BUILD) \
 					-I$(LIBOGC_INC)
 
 #---------------------------------------------------------------------------------
 # build a list of library paths
 #---------------------------------------------------------------------------------
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
-					-L$(PORTLIBS)/lib -L$(LIBOGC_LIB)
+					-L$(LIBOGC_LIB)
 
 export OUTPUT	:=	$(CURDIR)/lib/$(TARGET)
 .PHONY: $(BUILD) clean
@@ -114,13 +116,15 @@ clean:
 	@rm -fr $(BUILD) $(OUTPUT).a $(OUTPUT) $(CURDIR)/lib $(TARGET)-*.tgz
 #---------------------------------------------------------------------------------
 install:
-	cp $(OUTPUT).a $(LIBOGC_LIB)/$(TARGET).a
-	cp -fr include/* $(LIBOGC_INC)
+	@[ -d $(PORTLIBS_PATH)/wii/lib ] || mkdir -p $(PORTLIBS_PATH)/wii/lib
+	cp $(OUTPUT).a $(PORTLIBS_PATH)/wii/lib/$(TARGET).a
+	@[ -d $(PORTLIBS_PATH)/wii/include ] || mkdir -p $(PORTLIBS_PATH)/wii/include
+	cp -fr include/* $(PORTLIBS_PATH)/wii/include/.
 
 #---------------------------------------------------------------------------------
 uninstall:
-	rm $(LIBOGC_LIB)/$(TARGET).a
-	rm -fr $(LIBOGC_INC)/wiisprite* 
+	rm $(PORTLIBS_PATH)/wii/lib/$(TARGET).a
+	rm -fr $(PORTLIBS_PATH)/wii/include/wiisprite* 
 
 
 #---------------------------------------------------------------------------------
