@@ -15,18 +15,11 @@ include $(DEVKITPPC)/wii_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	libwiisprite
+TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data  
-INCLUDES	:= 
-
-#---------------------------------------------------------------------------------
-# version for release generation
-#---------------------------------------------------------------------------------
-MAJOR	 = 0
-MINOR	 = 3
-REVISION = 0f
+INCLUDES	:=	
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -40,7 +33,7 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	`freetype-config --libs` -lpng -lz -logc -lm
+LIBS	:=	-lwiisprite `freetype-config --libs` -lpng -lz -lwiiuse -lbte -logc -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -80,18 +73,15 @@ else
 	export LD	:=	$(CXX)
 endif
 
-export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
-export OFILES_SOURCES := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(sFILES:.s=.o) $(SFILES:.S=.o)
-export OFILES := $(OFILES_BIN) $(OFILES_SOURCES)
-
-export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES)))
+export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
+					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
+					$(sFILES:.s=.o) $(SFILES:.S=.o)
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
 #---------------------------------------------------------------------------------
 export INCLUDE	:=	$(foreach dir,$(INCLUDES), -iquote $(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-					-I$(CURDIR)/include \
 					-I$(CURDIR)/$(BUILD) \
 					-I$(LIBOGC_INC)
 
@@ -101,49 +91,24 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES), -iquote $(CURDIR)/$(dir)) \
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
 					-L$(LIBOGC_LIB)
 
-export OUTPUT	:=	$(CURDIR)/lib/$(TARGET)
+export OUTPUT	:=	$(CURDIR)/$(TARGET)
 .PHONY: $(BUILD) clean
 
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@[ -d $(CURDIR)/lib ] || mkdir -p $(CURDIR)/lib
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).a $(OUTPUT) $(CURDIR)/lib $(TARGET)-*.tgz
-#---------------------------------------------------------------------------------
-install:
-	@[ -d $(PORTLIBS_PATH)/wii/lib ] || mkdir -p $(PORTLIBS_PATH)/wii/lib
-	cp $(OUTPUT).a $(PORTLIBS_PATH)/wii/lib/$(TARGET).a
-	@[ -d $(PORTLIBS_PATH)/wii/include ] || mkdir -p $(PORTLIBS_PATH)/wii/include
-	cp -fr include/* $(PORTLIBS_PATH)/wii/include/.
-
-#---------------------------------------------------------------------------------
-uninstall:
-	rm $(PORTLIBS_PATH)/wii/lib/$(TARGET).a
-	rm -fr $(PORTLIBS_PATH)/wii/include/wiisprite* 
-
-
-#---------------------------------------------------------------------------------
-tgz:
-	tar -C $(CURDIR) -czf $(TARGET)-$(MAJOR).$(MINOR).$(REVISION).tgz lib include
-
-#---------------------------------------------------------------------------------
-src:
-	make clean
-	tar -C $(CURDIR) --exclude=*.tgz -czf $(TARGET)-$(MAJOR).$(MINOR).$(REVISION)_src.tgz *
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol
 
 #---------------------------------------------------------------------------------
 run:
 	wiiload $(TARGET).dol
 
-#---------------------------------------------------------------------------------
-%.a:
-	@echo linking to lib ... $(notdir $@)
-	@$(AR) -rc $@ $^
+
 #---------------------------------------------------------------------------------
 else
 
@@ -152,12 +117,21 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-$(OUTPUT).a: $(OFILES)
+$(OUTPUT).dol: $(OUTPUT).elf
+$(OUTPUT).elf: $(OFILES)
 
 #---------------------------------------------------------------------------------
-# This rule links in binary data with the .jpg extension
+# This rule links in binary data with the .png extension
 #---------------------------------------------------------------------------------
-%.jpg.o	:	%.jpg
+%.png.o	:	%.png
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	$(bin2o)
+
+#---------------------------------------------------------------------------------
+# This rule links in binary data with the .ttf extension
+#---------------------------------------------------------------------------------
+%.ttf.o	:	%.ttf
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	$(bin2o)
