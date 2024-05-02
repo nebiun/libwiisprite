@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <cmath> //On inclut la lib math permettant d'avoir la tangente
+#include <cmath> //Includiamo la libreria matematica che consente di avere la tangente
 
 #include <gccore.h>
 #include <wiiuse/wpad.h>
@@ -17,9 +17,9 @@ int main(int argc, char **argv)
 	Image im;
 	Sprite sprite;
 	LayerManager manager(1);
-	int frame=0;
+//	int frame=0;
 	float angle=0;
-	struct ir_t ir;
+//	struct ir_t ir;
 
 	bool continuare=true;
 
